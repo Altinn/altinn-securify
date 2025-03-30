@@ -15,6 +15,7 @@ builder.Services
     .AddSingleton<IKeyResolverService, SettingsBasedKeyResolverService>()
     .AddSingleton<IEncryptionService, AesGcmEncryptionService>()
     .AddSingleton<ISecurifyService, SecurifyService>()
+    .AddSingleton<IUserService, UserService>()
     .AddHttpContextAccessor()
     .AddOpenApi()
     .AddSecurifyAuthentication(builder.Configuration)
@@ -32,7 +33,7 @@ app.UseHttpsRedirection()
     .UseAuthentication()
     .UseAuthorization()
     .UseMiddleware<ExceptionHandlingMiddleware>();
-    
+
 
 app.MapPost("/encrypt", async (IOptions<SecurifyConfig> securifyConfig, ISecurifyService securifyService, EncryptionRequestDto requestDto) =>
 {
@@ -44,10 +45,10 @@ app.MapPost("/encrypt", async (IOptions<SecurifyConfig> securifyConfig, ISecurif
             statusCode: (int) HttpStatusCode.BadRequest,
             detail: string.Join(", ", errors));
     }
-    
+
     var encryptionRequest = requestDto.ToEncryptionRequest(securifyConfig.Value);
     var encryptionResult = await securifyService.Encrypt(encryptionRequest);
-    
+
     return Results.Ok(encryptionResult.ToEncryptionResultDto());
 }).RequireAuthorization();
 
@@ -63,7 +64,7 @@ app.MapPost("/decrypt", async (ISecurifyService securifyService, DecryptionReque
             statusCode: (int) HttpStatusCode.BadRequest,
             detail: string.Join(", ", decryptionResult.Errors));
     }
-    
+
     return Results.Ok(decryptionResult.ToDecryptionResultDto());
 }).RequireAuthorization();
 

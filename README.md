@@ -47,9 +47,17 @@ POST /api/v1/decrypt
 }
 ```
 Reponse:
-```json
+```jsonc
 {
-    "plaintext": "somesecretvalue"
+  "at": "2025-03-30T23:42:55.206517+02:00",
+  "by": {
+    "orgNo": "991825827",
+    "clientId": "cf991714-976c-47eb-88c6-dbbc7f65832d",
+    "scopes": [
+      "altinn:securify"
+    ]
+  },
+  "plaintext": "somesecretvalue"
 }
 ```
 
@@ -63,7 +71,7 @@ The encryption used is AES-GCM, which includes nonces and authentication tags to
 
 Along the nonce and authentication tag, a key ID is also embedded. This allows for runtime key resolution when decrypting, allowing for key server side rotation and revocation. 
 
-**The entire output value should be considered opaque by consumers**, and should not be parsed or assumed having any particular form (besides being URL safe). This allows the API to change encodings, encryption algorithms, modes, key/nonce/tag sizes on a per version or even per key-ID basis. This means no key material should be handled by consumers, and no assumptions should be made about the output format (other than being URL safe).
+**The entire output value (when encrypting) should be considered opaque by consumers**, and should not be parsed or assumed having any particular form (besides being URL safe). This allows the API to change encodings, encryption algorithms, modes, key/nonce/tag sizes on a per version or even per key-ID basis. This means no key material should be handled by consumers, and no assumptions should be made about the output format (other than being URL safe).
 
 ## Security settings
 
